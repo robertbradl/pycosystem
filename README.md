@@ -2,7 +2,7 @@
 
 ## Introduction and world simulation
 
-Pycosystem is a basic ecosystem simulation using PyGame. First and foremost, I wrote this programm as an excersize for myself, but also as an exam assignment for a class I am taking at university.
+Pycosystem is a basic ecosystem simulation using PyGame. First and foremost, I wrote this programm as an exercise for myself, but also as an exam assignment for a class I am taking at university.
 
 While not nearly as advanced or realistic as a full ecosystem, this program aims to examine the basics of genom inheritance and behavior.
 
