@@ -28,7 +28,8 @@ class Animal(Tile):
         # movement related variables
         self.queued_movements = []
         self.path_length = None
-        
+        self.pathfinder = Astar()
+
         # nutrient related variables
         self.food_found = False
         self.water_found = False
@@ -64,8 +65,7 @@ class Animal(Tile):
             if self.path_length:
             # searches for a more optimal path to a moving target after half the path has been traversed
                 if len(self.queued_movements) <= self.path_length/2:
-                    pathfinder = Astar()
-                    self.queued_movements = pathfinder.find_path(self.map, self.__convert_pos__(
+                    self.queued_movements = self.pathfinder.find_path(self.map, self.__convert_pos__(
                         self.pos), self.queued_movements[len(self.queued_movements)-1])
                     self.path_length = len(self.queued_movements)
                     self.__direct_movement__()
@@ -299,7 +299,7 @@ class Animal(Tile):
                 # 1. is in range 
                 # 2. doesn't have a mate 
                 # 3. is not itself
-                # 4. if the animal has reached mating age
+                # 4. has reached mating age
                 if self.__inside_range__(start_point, end_point, mate_pos_conv) and not self.population[entry].mate and not self.population[entry].key == self.key and self.population[entry].age > 100:
                     self.mate_pos = mate_pos_conv
                     self.population[entry].mate = self
@@ -323,18 +323,18 @@ class Animal(Tile):
         inheritance_values = [0 for x in range(6)] 
 
         for i in range(0,5,2):
-            r = rnd.randint(0,1)
             t = rnd.randint(0,1)
+            r = rnd.randint(0,3)
             if i == 0: # age values
                 if t == 0: # take male dominant
-                    if r == 0: # stays dominant 
+                    if r >= 0: # stays dominant 
                         inheritance_values[i] = genomes_m['max_age_d']
                         inheritance_values[i+1] = genomes_f['max_age_r']
                     else: # becomes recessive
                         inheritance_values[i+1] = genomes_m['max_age_d']
                         inheritance_values[i] = genomes_f['max_age_r']
                 else: # take female dominant
-                    if r == 0: # stays dominant 
+                    if r >= 0: # stays dominant 
                         inheritance_values[i] = genomes_f['max_age_d']
                         inheritance_values[i+1] = genomes_m['max_age_r']
                     else: # becomes recessive
@@ -342,14 +342,14 @@ class Animal(Tile):
                         inheritance_values[i] = genomes_m['max_age_r']
             elif i == 1: # hunger values
                 if t == 0: # take male dominant
-                    if r == 0: # stays dominant 
+                    if r >= 0: # stays dominant 
                         inheritance_values[i] = genomes_m['hunger_rate_d']
                         inheritance_values[i+1] = genomes_f['hunger_rate_r']
                     else: # becomes recessive
                         inheritance_values[i+1] = genomes_m['hunger_rate_d']
                         inheritance_values[i] = genomes_f['hunger_rate_r']
                 else: # take female dominant
-                    if r == 0: # stays dominant 
+                    if r >= 0: # stays dominant 
                         inheritance_values[i] = genomes_f['hunger_rate_d']
                         inheritance_values[i+1] = genomes_m['hunger_rate_r']
                     else: # becomes recessive
@@ -357,21 +357,21 @@ class Animal(Tile):
                         inheritance_values[i+1] = genomes_m['hunger_rate_r']
             else: # thirst values
                 if t == 0: # take male dominant
-                    if r == 0: # stays dominant 
+                    if r >= 0: # stays dominant 
                         inheritance_values[i] = genomes_m['thirst_rate_d']
                         inheritance_values[i+1] = genomes_f['thirst_rate_r']
                     else: # becomes recessive
                         inheritance_values[i+1] = genomes_m['thirst_rate_d']
                         inheritance_values[i] = genomes_f['thirst_rate_r']
                 else: # take female dominant
-                    if r == 0: # stays dominant 
+                    if r >= 0: # stays dominant 
                         inheritance_values[i] = genomes_f['thirst_rate_d']
                         inheritance_values[i+1] = genomes_m['thirst_rate_r']
                     else: # becomes recessive
                         inheritance_values[i+1] = genomes_f['thirst_rate_d']
                         inheritance_values[i] = genomes_m['thirst_rate_r']
 
-        if rnd.randint(1,4) == 4:
+        if rnd.randint(1,20) == 1:
             inheritance_values = self.__mutate_genes__(inheritance_values)
 
 
