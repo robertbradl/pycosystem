@@ -5,8 +5,9 @@
 Pycosystem is a basic ecosystem simulation using PyGame. First and foremost, I wrote this programm as an exercise for myself, but also as an exam assignment for a class I am taking at university.
 
 While not nearly as advanced or realistic as a full ecosystem, this program aims to examine the basics of genom inheritance and behavior.
+It is run from it's corresponding file (pycosys.py) and requires no additional parameters.
 
-The simulation consists of three different types of animals: omnivores (represented in gray), carnivores (represented in black) and herbivores (represented in white). The program is run from it's corresponding file, which just consists of a basic PyGame run-loop.
+The simulation consists of three different types of animals: omnivores (represented in gray), carnivores (represented in black) and herbivores (represented in white).
 
 When the simulation is started it will create an instance of the world class, which handles all animal instances as well as drawing and updating all sprites.
 
