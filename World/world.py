@@ -51,12 +51,12 @@ class World:
 # were passed or not, either generate a set of genomns or just pass the 
 # given genomns into the corresponding constructor
 
-    def __make_carnivore__(self, pos: tuple, passed_genoms: dict = None) -> None:
-        if passed_genoms:
+    def __make_carnivore__(self, pos: tuple, passed_genomes: dict = None) -> None:
+        if passed_genomes:
             self.carnis[self.carn_key] = Carnivore(
-                pos, self.herbis, passed_genoms, self.carnis, self.map, self.carn_key, self.images['carni'], [self.alive_sprites])
+                pos, self.herbis, passed_genomes, self.carnis, self.map, self.carn_key, self.images['carni'], [self.alive_sprites])
         else:
-            genoms = {'animal_type': 'carni',
+            genomes = {'animal_type': 'carni',
                   'max_age_d': rnd.randint(700, 800),
                   'max_age_r': rnd.randint(700, 800),
                   'hunger_rate_d': round(rnd.uniform(0.6, 1.4),2),
@@ -65,16 +65,16 @@ class World:
                   'thirst_rate_r': round(rnd.uniform(0.6, 1.4),2)}
             
             self.carnis[self.carn_key] = Carnivore(
-                pos, self.herbis, genoms, self.carnis, self.map, self.carn_key, self.images['carni'], [self.alive_sprites])
+                pos, self.herbis, genomes, self.carnis, self.map, self.carn_key, self.images['carni'], [self.alive_sprites])
 
         self.carn_key += 1
 
-    def __make_herbivore__(self, pos: tuple, passed_genoms: dict = None) -> None:
-        if passed_genoms:
+    def __make_herbivore__(self, pos: tuple, passed_genomes: dict = None) -> None:
+        if passed_genomes:
             self.herbis[self.herb_key] = Herbivore(
-                pos, passed_genoms, self.herbis, self.map, self.herb_key, self.images['herbi'], [self.alive_sprites])
+                pos, passed_genomes, self.herbis, self.map, self.herb_key, self.images['herbi'], [self.alive_sprites])
         else:
-            genoms = {'animal_type': 'herbi',
+            genomes = {'animal_type': 'herbi',
                   'max_age_d': rnd.randint(500, 600),
                   'max_age_r': rnd.randint(500, 600),
                   'hunger_rate_d': round(rnd.uniform(0.3, 0.8),2),
@@ -83,16 +83,16 @@ class World:
                   'thirst_rate_r': round(rnd.uniform(0.3, 0.8),2)}
             
             self.herbis[self.herb_key] = Herbivore(
-                pos, genoms, self.herbis, self.map, self.herb_key, self.images['herbi'], [self.alive_sprites])
+                pos, genomes, self.herbis, self.map, self.herb_key, self.images['herbi'], [self.alive_sprites])
 
         self.herb_key += 1
 
-    def __make_omnivore__(self, pos: tuple, passed_genoms: dict = None) -> None:
-        if passed_genoms:
+    def __make_omnivore__(self, pos: tuple, passed_genomes: dict = None) -> None:
+        if passed_genomes:
             self.omnis[self.omnis_key] = Omnivore(
-                pos, self.herbis, passed_genoms, self.omnis, self.map, self.omnis_key, self.images['omni'], [self.alive_sprites])
+                pos, self.herbis, passed_genomes, self.omnis, self.map, self.omnis_key, self.images['omni'], [self.alive_sprites])
         else:
-            genoms = {'animal_type': 'omni',
+            genomes = {'animal_type': 'omni',
                   'max_age_d': rnd.randint(900, 1000),
                   'max_age_r': rnd.randint(900, 1000),
                   'hunger_rate_d': round(rnd.uniform(0.3, 0.8),2),
@@ -101,7 +101,7 @@ class World:
                   'thirst_rate_r': round(rnd.uniform(0.3, 0.8),2)}
             
             self.omnis[self.omnis_key] = Omnivore(
-                pos, self.herbis, genoms, self.omnis, self.map, self.omnis_key, self.images['omni'], [self.alive_sprites])
+                pos, self.herbis, genomes, self.omnis, self.map, self.omnis_key, self.images['omni'], [self.alive_sprites])
 
         self.omnis_key += 1
 

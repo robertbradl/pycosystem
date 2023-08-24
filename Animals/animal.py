@@ -8,22 +8,22 @@ import numpy as np
 
 class Animal(Tile):
 
-    def __init__(self, pos: tuple, genoms: dict, population: dict, map: list, key: int, sprite: str, group) -> None:
+    def __init__(self, pos: tuple, genomes: dict, population: dict, map: list, key: int, sprite: str, group) -> None:
         super().__init__(pos, sprite, group)
 
         self.pos = pos
-        self.genoms = genoms
+        self.genomes = genomes
         self.map = map
         self.population = population # all currently alive animals of the same type
         self.key = key # the animals population key
 
         self.age = 0
-        self.type = self.genoms['animal_type']
-        self.max_age = self.genoms['max_age_d']
+        self.type = self.genomes['animal_type']
+        self.max_age = self.genomes['max_age_d']
         self.hunger = 0
-        self.hunger_rate = self.genoms['hunger_rate_d']
+        self.hunger_rate = self.genomes['hunger_rate_d']
         self.thirst = 0
-        self.thirst_rate = self.genoms['thirst_rate_d']
+        self.thirst_rate = self.genomes['thirst_rate_d']
 
         # movement related variables
         self.queued_movements = []
@@ -91,13 +91,13 @@ class Animal(Tile):
         elif self.mate and self.mate_pos:
             if self.mate_pos == self.__convert_pos__(self.pos):
                 # HERE BE MATING
-                new_genoms = self.__generate_genoms__(self.genoms, self.mate.genoms)
+                new_genomes = self.__generate_genoms__(self.genomes, self.mate.genomes)
                 self.mate_pos = None
                 self.mate.cooldown = 1
                 self.mate.mate = None
                 self.mate = None
                 self.cooldown = 1
-                return [self.type, self.pos, new_genoms]
+                return [self.type, self.pos, new_genomes]
 
         # increasing hunger and thirst
         self.hunger += self.hunger_rate
@@ -316,9 +316,9 @@ class Animal(Tile):
             self.path_length = len(self.queued_movements)
 
 
-    def __generate_genoms__(self, genoms1: dict, genoms2: dict) -> dict:
-        genoms_f = genoms1
-        genoms_m = genoms2
+    def __generate_genoms__(self, genomes1: dict, genomes2: dict) -> dict:
+        genomes_f = genomes1
+        genomes_m = genomes2
 
         inheritance_values = [0 for x in range(6)] 
 
@@ -328,54 +328,54 @@ class Animal(Tile):
             if i == 0: # age values
                 if t == 0: # take male dominant
                     if r == 0: # stays dominant 
-                        inheritance_values[i] = genoms_m['max_age_d']
-                        inheritance_values[i+1] = genoms_f['max_age_r']
+                        inheritance_values[i] = genomes_m['max_age_d']
+                        inheritance_values[i+1] = genomes_f['max_age_r']
                     else: # becomes recessive
-                        inheritance_values[i+1] = genoms_m['max_age_d']
-                        inheritance_values[i] = genoms_f['max_age_r']
+                        inheritance_values[i+1] = genomes_m['max_age_d']
+                        inheritance_values[i] = genomes_f['max_age_r']
                 else: # take female dominant
                     if r == 0: # stays dominant 
-                        inheritance_values[i] = genoms_f['max_age_d']
-                        inheritance_values[i+1] = genoms_m['max_age_r']
+                        inheritance_values[i] = genomes_f['max_age_d']
+                        inheritance_values[i+1] = genomes_m['max_age_r']
                     else: # becomes recessive
-                        inheritance_values[i+1] = genoms_f['max_age_d']
-                        inheritance_values[i] = genoms_m['max_age_r']
+                        inheritance_values[i+1] = genomes_f['max_age_d']
+                        inheritance_values[i] = genomes_m['max_age_r']
             elif i == 1: # hunger values
                 if t == 0: # take male dominant
                     if r == 0: # stays dominant 
-                        inheritance_values[i] = genoms_m['hunger_rate_d']
-                        inheritance_values[i+1] = genoms_f['hunger_rate_r']
+                        inheritance_values[i] = genomes_m['hunger_rate_d']
+                        inheritance_values[i+1] = genomes_f['hunger_rate_r']
                     else: # becomes recessive
-                        inheritance_values[i+1] = genoms_m['hunger_rate_d']
-                        inheritance_values[i] = genoms_f['hunger_rate_r']
+                        inheritance_values[i+1] = genomes_m['hunger_rate_d']
+                        inheritance_values[i] = genomes_f['hunger_rate_r']
                 else: # take female dominant
                     if r == 0: # stays dominant 
-                        inheritance_values[i] = genoms_f['hunger_rate_d']
-                        inheritance_values[i+1] = genoms_m['hunger_rate_r']
+                        inheritance_values[i] = genomes_f['hunger_rate_d']
+                        inheritance_values[i+1] = genomes_m['hunger_rate_r']
                     else: # becomes recessive
-                        inheritance_values[i] = genoms_f['hunger_rate_d']
-                        inheritance_values[i+1] = genoms_m['hunger_rate_r']
+                        inheritance_values[i] = genomes_f['hunger_rate_d']
+                        inheritance_values[i+1] = genomes_m['hunger_rate_r']
             else: # thirst values
                 if t == 0: # take male dominant
                     if r == 0: # stays dominant 
-                        inheritance_values[i] = genoms_m['thirst_rate_d']
-                        inheritance_values[i+1] = genoms_f['thirst_rate_r']
+                        inheritance_values[i] = genomes_m['thirst_rate_d']
+                        inheritance_values[i+1] = genomes_f['thirst_rate_r']
                     else: # becomes recessive
-                        inheritance_values[i+1] = genoms_m['thirst_rate_d']
-                        inheritance_values[i] = genoms_f['thirst_rate_r']
+                        inheritance_values[i+1] = genomes_m['thirst_rate_d']
+                        inheritance_values[i] = genomes_f['thirst_rate_r']
                 else: # take female dominant
                     if r == 0: # stays dominant 
-                        inheritance_values[i] = genoms_f['thirst_rate_d']
-                        inheritance_values[i+1] = genoms_m['thirst_rate_r']
+                        inheritance_values[i] = genomes_f['thirst_rate_d']
+                        inheritance_values[i+1] = genomes_m['thirst_rate_r']
                     else: # becomes recessive
-                        inheritance_values[i+1] = genoms_f['thirst_rate_d']
-                        inheritance_values[i] = genoms_m['thirst_rate_r']
+                        inheritance_values[i+1] = genomes_f['thirst_rate_d']
+                        inheritance_values[i] = genomes_m['thirst_rate_r']
 
         if rnd.randint(1,4) == 4:
             inheritance_values = self.__mutate_genes__(inheritance_values)
 
 
-        new_genoms = {'animal_type': genoms_m['animal_type'],
+        new_genomes = {'animal_type': genomes_m['animal_type'],
                   'max_age_d': inheritance_values[0],
                   'max_age_r': inheritance_values[1],
                   'hunger_rate_d': inheritance_values[2],
@@ -383,7 +383,7 @@ class Animal(Tile):
                   'thirst_rate_d': inheritance_values[4],
                   'thirst_rate_r': inheritance_values[5]}
         
-        return new_genoms
+        return new_genomes
     
     def __mutate_genes__(self, inh_val: list) -> list:
         new_values = inh_val
