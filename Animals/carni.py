@@ -19,4 +19,4 @@ class Carnivore(Animal):
             return value
 
     def __find_food__(self) -> None:
-        self.__find_meat__()
+        self.__find_prey__()

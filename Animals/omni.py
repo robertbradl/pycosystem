@@ -20,6 +20,6 @@ class Omnivore(Animal):
 
     def __find_food__(self) -> None:
         if self.hunger <= 50:
-            self.__find_meat__()
+            self.__find_prey__()
         else:
             self.__find_berry__()

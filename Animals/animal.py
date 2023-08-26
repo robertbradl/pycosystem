@@ -179,7 +179,7 @@ class Animal(Tile):
     def __find_food__(self) -> None:
         pass
 
-    def __find_meat__(self) -> None:
+    def __find_prey__(self) -> None:
         start_point = self.__convert_pos__(self.pos)
         end_point = self.__convert_pos__(self.pos)
 
