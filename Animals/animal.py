@@ -14,8 +14,8 @@ class Animal(Tile):
         self.pos = pos
         self.genomes = genomes
         self.map = map
-        self.population = population # all currently alive animals of the same type
-        self.key = key # the animals population key
+        self.population = population  # all currently alive animals of the same type
+        self.key = key  # the animals population key
 
         self.age = 0
         self.type = self.genomes['animal_type']
@@ -37,9 +37,9 @@ class Animal(Tile):
         self.water_point = None
 
         # mating related variables
-        self.mate = None # gets set to the corresponding animal
-        self.mate_pos = None # only gets set for the searching animal
-        self.cooldown = None # mating cooldown
+        self.mate = None  # gets set to the corresponding animal
+        self.mate_pos = None  # only gets set for the searching animal
+        self.cooldown = None  # mating cooldown
 
     # cleanup function
     def __cleanup_on_death__(self) -> None:
@@ -63,7 +63,7 @@ class Animal(Tile):
             self.__normal_movement__()
         else:
             if self.path_length:
-            # searches for a more optimal path to a moving target after half the path has been traversed
+                # searches for a more optimal path to a moving target after half the path has been traversed
                 if len(self.queued_movements) <= self.path_length/2:
                     self.queued_movements = self.pathfinder.find_path(self.map, self.__convert_pos__(
                         self.pos), self.queued_movements[len(self.queued_movements)-1])
@@ -91,7 +91,8 @@ class Animal(Tile):
         elif self.mate and self.mate_pos:
             if self.mate_pos == self.__convert_pos__(self.pos):
                 # HERE BE MATING
-                new_genomes = self.__generate_genoms__(self.genomes, self.mate.genomes)
+                new_genomes = self.__generate_genoms__(
+                    self.genomes, self.mate.genomes)
                 self.mate_pos = None
                 self.mate.cooldown = 1
                 self.mate.mate = None
@@ -147,7 +148,7 @@ class Animal(Tile):
         y = int(pos[1] / TILESIZE)
         return tuple((x, y))
 
-    # normal (random) movement 
+    # normal (random) movement
     def __normal_movement__(self) -> None:
         direction = rnd.randint(1, 4)
 
@@ -168,7 +169,7 @@ class Animal(Tile):
                 self.rect.center -= pg.math.Vector2(TILESIZE, 0)
                 self.pos = tuple(np.subtract(self.pos, (TILESIZE, 0)))
 
-    # direct movement 
+    # direct movement
     def __direct_movement__(self) -> None:
         new_pos = self.queued_movements.pop(0)
         new_pos = tuple((new_pos[0]*TILESIZE, new_pos[1]*TILESIZE))
@@ -232,7 +233,7 @@ class Animal(Tile):
 
             for y in range(start_point[1], end_point[1]):
                 for x in range(start_point[0], end_point[0]):
-                    if self.map[y][x] == 0: # checks for berry entry
+                    if self.map[y][x] == 0:  # checks for berry entry
                         self.food_found = True
                         self.food_point = (x, y)
                         break
@@ -264,7 +265,7 @@ class Animal(Tile):
 
             for y in range(start_point[1], end_point[1]):
                 for x in range(start_point[0], end_point[0]):
-                    if self.map[y][x] == 5: # checks for water entry
+                    if self.map[y][x] == 5:  # checks for water entry
                         self.water_found = True
                         self.water_point = (x, y)
                         break
@@ -296,8 +297,8 @@ class Animal(Tile):
                 mate_pos_conv = self.__convert_pos__(
                     self.population[entry].pos)
                 # checks if the entry:
-                # 1. is in range 
-                # 2. doesn't have a mate 
+                # 1. is in range
+                # 2. doesn't have a mate
                 # 3. is not itself
                 # 4. has reached mating age
                 if self.__inside_range__(start_point, end_point, mate_pos_conv) and not self.population[entry].mate and not self.population[entry].key == self.key and self.population[entry].age > 100:
@@ -315,85 +316,81 @@ class Animal(Tile):
                 self.map, self.__convert_pos__(self.pos), self.mate_pos)
             self.path_length = len(self.queued_movements)
 
-
     def __generate_genoms__(self, genomes1: dict, genomes2: dict) -> dict:
         genomes_f = genomes1
         genomes_m = genomes2
 
-        inheritance_values = [0 for x in range(6)] 
+        inheritance_values = [0 for x in range(6)]
 
-        for i in range(0,5,2):
-            t = rnd.randint(0,1)
-            r = rnd.randint(0,3)
-            if i == 0: # age values
-                if t == 0: # take male dominant
-                    if r >= 0: # stays dominant 
+        for i in range(0, 5, 2):
+            t = rnd.randint(0, 1)
+            r = rnd.randint(0, 3)
+            if i == 0:  # age values
+                if t == 0:  # take male dominant
+                    if r >= 0:  # stays dominant
                         inheritance_values[i] = genomes_m['max_age_d']
                         inheritance_values[i+1] = genomes_f['max_age_r']
-                    else: # becomes recessive
+                    else:  # becomes recessive
                         inheritance_values[i+1] = genomes_m['max_age_d']
                         inheritance_values[i] = genomes_f['max_age_r']
-                else: # take female dominant
-                    if r >= 0: # stays dominant 
+                else:  # take female dominant
+                    if r >= 0:  # stays dominant
                         inheritance_values[i] = genomes_f['max_age_d']
                         inheritance_values[i+1] = genomes_m['max_age_r']
-                    else: # becomes recessive
+                    else:  # becomes recessive
                         inheritance_values[i+1] = genomes_f['max_age_d']
                         inheritance_values[i] = genomes_m['max_age_r']
-            elif i == 1: # hunger values
-                if t == 0: # take male dominant
-                    if r >= 0: # stays dominant 
+            elif i == 1:  # hunger values
+                if t == 0:  # take male dominant
+                    if r >= 0:  # stays dominant
                         inheritance_values[i] = genomes_m['hunger_rate_d']
                         inheritance_values[i+1] = genomes_f['hunger_rate_r']
-                    else: # becomes recessive
+                    else:  # becomes recessive
                         inheritance_values[i+1] = genomes_m['hunger_rate_d']
                         inheritance_values[i] = genomes_f['hunger_rate_r']
-                else: # take female dominant
-                    if r >= 0: # stays dominant 
+                else:  # take female dominant
+                    if r >= 0:  # stays dominant
                         inheritance_values[i] = genomes_f['hunger_rate_d']
                         inheritance_values[i+1] = genomes_m['hunger_rate_r']
-                    else: # becomes recessive
+                    else:  # becomes recessive
                         inheritance_values[i] = genomes_f['hunger_rate_d']
                         inheritance_values[i+1] = genomes_m['hunger_rate_r']
-            else: # thirst values
-                if t == 0: # take male dominant
-                    if r >= 0: # stays dominant 
+            else:  # thirst values
+                if t == 0:  # take male dominant
+                    if r >= 0:  # stays dominant
                         inheritance_values[i] = genomes_m['thirst_rate_d']
                         inheritance_values[i+1] = genomes_f['thirst_rate_r']
-                    else: # becomes recessive
+                    else:  # becomes recessive
                         inheritance_values[i+1] = genomes_m['thirst_rate_d']
                         inheritance_values[i] = genomes_f['thirst_rate_r']
-                else: # take female dominant
-                    if r >= 0: # stays dominant 
+                else:  # take female dominant
+                    if r >= 0:  # stays dominant
                         inheritance_values[i] = genomes_f['thirst_rate_d']
                         inheritance_values[i+1] = genomes_m['thirst_rate_r']
-                    else: # becomes recessive
+                    else:  # becomes recessive
                         inheritance_values[i+1] = genomes_f['thirst_rate_d']
                         inheritance_values[i] = genomes_m['thirst_rate_r']
 
-        if rnd.randint(1,20) == 1:
+        if rnd.randint(1, 20) == 1:
             inheritance_values = self.__mutate_genes__(inheritance_values)
 
-
         new_genomes = {'animal_type': genomes_m['animal_type'],
-                  'max_age_d': inheritance_values[0],
-                  'max_age_r': inheritance_values[1],
-                  'hunger_rate_d': inheritance_values[2],
-                  'hunger_rate_r': inheritance_values[3],
-                  'thirst_rate_d': inheritance_values[4],
-                  'thirst_rate_r': inheritance_values[5]}
-        
+                       'max_age_d': inheritance_values[0],
+                       'max_age_r': inheritance_values[1],
+                       'hunger_rate_d': inheritance_values[2],
+                       'hunger_rate_r': inheritance_values[3],
+                       'thirst_rate_d': inheritance_values[4],
+                       'thirst_rate_r': inheritance_values[5]}
+
         return new_genomes
-    
+
     def __mutate_genes__(self, inh_val: list) -> list:
         new_values = inh_val
 
-        for i in range(0,5,2):
-            mut = round((rnd.uniform(new_values[i],new_values[i+1])/4),2)
-            x = rnd.randint(0,1)
+        for i in range(0, 5, 2):
+            mut = round((rnd.uniform(new_values[i], new_values[i+1])/4), 2)
+            x = rnd.randint(0, 1)
             new_values[i] += mut if x == 0 else (-1)*mut
             new_values[i+1] += mut if x == 0 else (-1)*mut
 
         return new_values
-
-        

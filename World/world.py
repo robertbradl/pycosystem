@@ -44,11 +44,10 @@ class World:
         self.__create_map__()
 
 
+# MAKE ANIMAL SECTION
 
-############## MAKE ANIMAL SECTION
-
-# all functions work identical: take a position and, depending if genomns 
-# were passed or not, either generate a set of genomns or just pass the 
+# all functions work identical: take a position and, depending if genomns
+# were passed or not, either generate a set of genomns or just pass the
 # given genomns into the corresponding constructor
 
     def __make_carnivore__(self, pos: tuple, passed_genomes: dict = None) -> None:
@@ -57,13 +56,13 @@ class World:
                 pos, self.herbis, passed_genomes, self.carnis, self.map, self.carn_key, self.images['carni'], [self.alive_sprites])
         else:
             genomes = {'animal_type': 'carni',
-                  'max_age_d': rnd.randint(700, 800),
-                  'max_age_r': rnd.randint(700, 800),
-                  'hunger_rate_d': round(rnd.uniform(0.6, 1.4),2),
-                  'hunger_rate_r': round(rnd.uniform(0.6, 1.4),2),
-                  'thirst_rate_d': round(rnd.uniform(0.6, 1.4),2),
-                  'thirst_rate_r': round(rnd.uniform(0.6, 1.4),2)}
-            
+                       'max_age_d': rnd.randint(700, 800),
+                       'max_age_r': rnd.randint(700, 800),
+                       'hunger_rate_d': round(rnd.uniform(0.6, 1.4), 2),
+                       'hunger_rate_r': round(rnd.uniform(0.6, 1.4), 2),
+                       'thirst_rate_d': round(rnd.uniform(0.6, 1.4), 2),
+                       'thirst_rate_r': round(rnd.uniform(0.6, 1.4), 2)}
+
             self.carnis[self.carn_key] = Carnivore(
                 pos, self.herbis, genomes, self.carnis, self.map, self.carn_key, self.images['carni'], [self.alive_sprites])
 
@@ -75,13 +74,13 @@ class World:
                 pos, passed_genomes, self.herbis, self.map, self.herb_key, self.images['herbi'], [self.alive_sprites])
         else:
             genomes = {'animal_type': 'herbi',
-                  'max_age_d': rnd.randint(500, 600),
-                  'max_age_r': rnd.randint(500, 600),
-                  'hunger_rate_d': round(rnd.uniform(0.3, 0.8),2),
-                  'hunger_rate_r': round(rnd.uniform(0.3, 0.8),2),
-                  'thirst_rate_d': round(rnd.uniform(0.3, 0.8),2),
-                  'thirst_rate_r': round(rnd.uniform(0.3, 0.8),2)}
-            
+                       'max_age_d': rnd.randint(500, 600),
+                       'max_age_r': rnd.randint(500, 600),
+                       'hunger_rate_d': round(rnd.uniform(0.3, 0.8), 2),
+                       'hunger_rate_r': round(rnd.uniform(0.3, 0.8), 2),
+                       'thirst_rate_d': round(rnd.uniform(0.3, 0.8), 2),
+                       'thirst_rate_r': round(rnd.uniform(0.3, 0.8), 2)}
+
             self.herbis[self.herb_key] = Herbivore(
                 pos, genomes, self.herbis, self.map, self.herb_key, self.images['herbi'], [self.alive_sprites])
 
@@ -93,21 +92,19 @@ class World:
                 pos, self.herbis, passed_genomes, self.omnis, self.map, self.omnis_key, self.images['omni'], [self.alive_sprites])
         else:
             genomes = {'animal_type': 'omni',
-                  'max_age_d': rnd.randint(900, 1000),
-                  'max_age_r': rnd.randint(900, 1000),
-                  'hunger_rate_d': round(rnd.uniform(0.3, 0.8),2),
-                  'hunger_rate_r': round(rnd.uniform(0.3, 0.8),2),
-                  'thirst_rate_d': round(rnd.uniform(0.3, 0.8),2),
-                  'thirst_rate_r': round(rnd.uniform(0.3, 0.8),2)}
-            
+                       'max_age_d': rnd.randint(900, 1000),
+                       'max_age_r': rnd.randint(900, 1000),
+                       'hunger_rate_d': round(rnd.uniform(0.3, 0.8), 2),
+                       'hunger_rate_r': round(rnd.uniform(0.3, 0.8), 2),
+                       'thirst_rate_d': round(rnd.uniform(0.3, 0.8), 2),
+                       'thirst_rate_r': round(rnd.uniform(0.3, 0.8), 2)}
+
             self.omnis[self.omnis_key] = Omnivore(
                 pos, self.herbis, genomes, self.omnis, self.map, self.omnis_key, self.images['omni'], [self.alive_sprites])
 
         self.omnis_key += 1
 
-############## END OF MAKE ANIMAL SECTION
-
-
+# END OF MAKE ANIMAL SECTION
 
     def __create_map__(self) -> None:
 
@@ -122,23 +119,23 @@ class World:
             for col_index, col in enumerate(row):
                 x = col_index * TILESIZE
                 y = row_index * TILESIZE
-                if col == 2.0: # grass tiles
+                if col == 2.0:  # grass tiles
                     Tile((x, y), self.images['grass'], [self.world_sprites])
-                elif col == 0.0: # berry tiles
+                elif col == 0.0:  # berry tiles
                     Tile((x, y), self.images['berry'], [self.world_sprites])
-                elif col == 5.0: # water tiles
+                elif col == 5.0:  # water tiles
                     Tile((x, y), self.images['water'], [self.world_sprites])
-                elif col == 1.0: # carnivore
+                elif col == 1.0:  # carnivore
                     # there needs to be a grass tile placed under the animal
                     Tile((x, y), self.images['grass'], [self.world_sprites])
                     self.__make_carnivore__((x, y))
-                elif col == 3.0: # herbivore
+                elif col == 3.0:  # herbivore
                     # see above
                     Tile((x, y), self.images['grass'], [self.world_sprites])
                     self.__make_herbivore__((x, y))
-                elif col == 4.0: # omnivore
+                elif col == 4.0:  # omnivore
                     Tile((x, y), self.images['grass'], [self.world_sprites])
-                    self.__make_omnivore__((x,y))
+                    self.__make_omnivore__((x, y))
                 else:  # this shouldn't happen
                     print("Error: Unknown value in CSV at: " +
                           str((x, y)) + ". Exiting program.")
@@ -149,10 +146,9 @@ class World:
         self.world_sprites.draw(self.display_surface)
         self.alive_sprites.draw(self.display_surface)
 
-
         # alive check and process for every sprite/animal
         for animal in self.alive_sprites:
-            value = animal.alive() 
+            value = animal.alive()
             # alive function returns either a boolean or a list if the animal mated
             if type(value) == bool:
                 # check if alive or dead
@@ -168,7 +164,7 @@ class World:
                         print(
                             "Error: Animal of unknown type encountered during removal process. Exiting programm.")
                         exit(1)
-                    animal.kill() # removes sprite from all groups
+                    animal.kill()  # removes sprite from all groups
             else:
                 # if the animal mated
                 if value[0] == 'herbi':
