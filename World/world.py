@@ -149,9 +149,6 @@ class World:
         self.world_sprites.draw(self.display_surface)
         self.alive_sprites.draw(self.display_surface)
 
-        # removing all dead sprites
-        for sprite in self.dead_sprites:
-            sprite.kill()
 
         # alive check and process for every sprite/animal
         for animal in self.alive_sprites:
@@ -160,8 +157,7 @@ class World:
             if type(value) == bool:
                 # check if alive or dead
                 if not value:
-                    self.dead_sprites.add(animal)
-                    self.alive_sprites.remove(animal)
+
                     if animal.type == 'herbi':
                         self.herbis.pop(animal.key)
                     elif animal.type == 'carni':
@@ -172,6 +168,7 @@ class World:
                         print(
                             "Error: Animal of unknown type encountered during removal process. Exiting programm.")
                         exit(1)
+                    animal.kill() # removes sprite from all groups
             else:
                 # if the animal mated
                 if value[0] == 'herbi':
