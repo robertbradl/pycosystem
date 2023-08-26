@@ -43,6 +43,8 @@ class World:
         # map setup
         self.__create_map__()
 
+        self.font = pg.font.SysFont("arial", 20, True)
+
 
 # MAKE ANIMAL SECTION
 
@@ -145,6 +147,13 @@ class World:
         # updating the sprites
         self.world_sprites.draw(self.display_surface)
         self.alive_sprites.draw(self.display_surface)
+
+        live_herbs = self.font.render("Alive herbivores: " + str(len(self.herbis)), False, (0,0,0))
+        live_carns = self.font.render("Alive carnivores: " + str(len(self.carnis)), False, (0,0,0))
+        live_ommnis = self.font.render("Alive omnivores: " + str(len(self.omnis)), False, (0,0,0))
+        self.display_surface.blit(live_herbs, (10,10))
+        self.display_surface.blit(live_carns, (10,35))
+        self.display_surface.blit(live_ommnis, (10,60))
 
         # alive check and process for every sprite/animal
         for animal in self.alive_sprites:

@@ -8,6 +8,7 @@ class Simulation:
     # general setup
     def __init__(self) -> None:
         pg.init()
+        pg.font.init()
 
         self.screen = pg.display.set_mode((WIDTH,HEIGHT))
         pg.display.set_caption('Pycosystem')

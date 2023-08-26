@@ -64,7 +64,7 @@ class Animal(Tile):
         else:
             if self.path_length:
                 # searches for a more optimal path to a moving target after half the path has been traversed
-                if len(self.queued_movements) <= self.path_length/2:
+                if len(self.queued_movements) <= self.path_length/2 and self.path_length > 4:
                     self.queued_movements = self.pathfinder.find_path(self.map, self.__convert_pos__(
                         self.pos), self.queued_movements[len(self.queued_movements)-1])
                     self.path_length = len(self.queued_movements)
