@@ -1,9 +1,9 @@
-from astar import Astar
 from World.tile import Tile
 from settings import *
 import pygame as pg
 import random as rnd
 import numpy as np
+import astar as ast
 
 
 class Animal(Tile):
@@ -47,7 +47,6 @@ class Animal(Tile):
         # movement related variables
         self.queued_movements = []
         self.path_length = None
-        self.pathfinder = Astar()
 
         # nutrient related variables
         self.food_found = False
@@ -91,7 +90,7 @@ class Animal(Tile):
                 and self.path_length > 4
             ):
                 # searches for a more optimal path to a moving target after half the path has been traversed
-                self.queued_movements = self.pathfinder.find_path(
+                self.queued_movements = ast.find_path(
                     self.map,
                     self.__convert_pos__(self.pos),
                     self.queued_movements[len(self.queued_movements) - 1],
@@ -103,16 +102,17 @@ class Animal(Tile):
         if self.__convert_pos__(self.pos) == self.food_point:
             self.food_found = False
             self.food_point = None
-            self.hunger -= 35 * (2 - self.hunger_rate)
+            self.hunger -= 350 * (20 - self.hunger_rate)
         elif self.__convert_pos__(self.pos) == self.water_point:
             self.water_found = False
             self.water_point = None
-            self.thirst -= 35 * (2 - self.thirst_rate)
+            self.thirst -= 350 * (20 - self.thirst_rate)
 
         if self.mate:
             if not self.mate_pos:
                 # this triggers only if a animal wants to mate with this animal
-                self.mate.queued_movements.append(self.__convert_pos__(self.pos))
+                self.mate.queued_movements.append(
+                    self.__convert_pos__(self.pos))
                 self.mate.mate_pos = self.__convert_pos__(self.pos)
             elif self.mate_pos == self.__convert_pos__(self.pos):
                 return self.__mating_process__(self.genomes, self.mate.genomes)
@@ -124,7 +124,7 @@ class Animal(Tile):
         if not self.queued_movements:
             self.__resolve_needs__()
 
-        return self.hunger < 100 and self.thirst < 100 and self.age < self.max_age
+        return self.hunger < 1000 and self.thirst < 1000 and self.age < self.max_age
 
     def __inside_range__(self, start: tuple, end: tuple, point: tuple) -> bool:
         """Checks if a point is inside the rectangle made by two points
@@ -232,9 +232,9 @@ class Animal(Tile):
 
     def __resolve_needs__(self) -> None:
         """Checks if the animal is hungry, thirsty or is able to mate and if so, triggers the corresponding functions."""
-        if self.thirst > 50 and not self.water_found:
+        if self.thirst > 500 and not self.water_found:
             self.__find_water__()
-        elif self.hunger > 35 and not self.food_found:
+        elif self.hunger > 350 and not self.food_found:
             self.__find_food__()
         elif not self.mate and self.age > 100 and not self.cooldown:
             self.__find_mate__()
@@ -260,7 +260,8 @@ class Animal(Tile):
             for entry in self.huntable:
                 prey_pos_conv = self.__convert_pos__(self.huntable[entry].pos)
                 if (
-                    self.__inside_range__(start_point, end_point, prey_pos_conv)
+                    self.__inside_range__(
+                        start_point, end_point, prey_pos_conv)
                     and not self.huntable[entry].hunted
                 ):
                     self.huntable[entry].hunted = True
@@ -274,8 +275,7 @@ class Animal(Tile):
                 break
 
         if self.food_found:
-            pathfinder = Astar()
-            self.queued_movements = pathfinder.find_path(
+            self.queued_movements = ast.find_path(
                 self.map, self.__convert_pos__(self.pos), self.food_point
             )
             self.path_length = len(self.queued_movements)
@@ -309,8 +309,7 @@ class Animal(Tile):
                 break
 
         if self.food_found:
-            pathfinder = Astar()
-            self.queued_movements = pathfinder.find_path(
+            self.queued_movements = ast.find_path(
                 self.map, self.__convert_pos__(self.pos), self.food_point
             )
 
@@ -343,8 +342,7 @@ class Animal(Tile):
                 break
 
         if self.water_found:
-            pathfinder = Astar()
-            self.queued_movements = pathfinder.find_path(
+            self.queued_movements = ast.find_path(
                 self.map, self.__convert_pos__(self.pos), self.water_point
             )
 
@@ -363,14 +361,16 @@ class Animal(Tile):
                 end_point = (end_point[0], end_point[1] + 1)
 
             for entry in self.population:
-                mate_pos_conv = self.__convert_pos__(self.population[entry].pos)
+                mate_pos_conv = self.__convert_pos__(
+                    self.population[entry].pos)
                 # checks if the entry:
                 # 1. is in range
                 # 2. doesn't have a mate
                 # 3. is not itself
                 # 4. has reached mating age
                 if (
-                    self.__inside_range__(start_point, end_point, mate_pos_conv)
+                    self.__inside_range__(
+                        start_point, end_point, mate_pos_conv)
                     and not self.population[entry].mate
                     and self.population[entry].key != self.key
                     and self.population[entry].age > 100
@@ -384,8 +384,7 @@ class Animal(Tile):
                 break
 
         if self.mate_pos:
-            pathfinder = Astar()
-            self.queued_movements = pathfinder.find_path(
+            self.queued_movements = ast.find_path(
                 self.map, self.__convert_pos__(self.pos), self.mate_pos
             )
             self.path_length = len(self.queued_movements)

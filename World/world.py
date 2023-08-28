@@ -70,10 +70,10 @@ class World:
                 "animal_type": "carni",
                 "max_age_d": rnd.randint(700, 800),
                 "max_age_r": rnd.randint(700, 800),
-                "hunger_rate_d": round(rnd.uniform(0.6, 1.4), 2),
-                "hunger_rate_r": round(rnd.uniform(0.6, 1.4), 2),
-                "thirst_rate_d": round(rnd.uniform(0.6, 1.4), 2),
-                "thirst_rate_r": round(rnd.uniform(0.6, 1.4), 2),
+                "hunger_rate_d": round(rnd.uniform(8, 15), 2),
+                "hunger_rate_r": round(rnd.uniform(8, 15), 2),
+                "thirst_rate_d": round(rnd.uniform(8, 15), 2),
+                "thirst_rate_r": round(rnd.uniform(8, 15), 2),
             }
 
             self.carnis[self.carn_key] = Carnivore(
@@ -111,10 +111,10 @@ class World:
                 "animal_type": "herbi",
                 "max_age_d": rnd.randint(500, 600),
                 "max_age_r": rnd.randint(500, 600),
-                "hunger_rate_d": round(rnd.uniform(0.3, 0.8), 2),
-                "hunger_rate_r": round(rnd.uniform(0.3, 0.8), 2),
-                "thirst_rate_d": round(rnd.uniform(0.3, 0.8), 2),
-                "thirst_rate_r": round(rnd.uniform(0.3, 0.8), 2),
+                "hunger_rate_d": round(rnd.uniform(5,10), 2),
+                "hunger_rate_r": round(rnd.uniform(5,10), 2),
+                "thirst_rate_d": round(rnd.uniform(5,10), 2),
+                "thirst_rate_r": round(rnd.uniform(5,10), 2),
             }
 
             self.herbis[self.herb_key] = Herbivore(
@@ -152,10 +152,10 @@ class World:
                 "animal_type": "omni",
                 "max_age_d": rnd.randint(900, 1000),
                 "max_age_r": rnd.randint(900, 1000),
-                "hunger_rate_d": round(rnd.uniform(0.3, 0.8), 2),
-                "hunger_rate_r": round(rnd.uniform(0.3, 0.8), 2),
-                "thirst_rate_d": round(rnd.uniform(0.3, 0.8), 2),
-                "thirst_rate_r": round(rnd.uniform(0.3, 0.8), 2),
+                "hunger_rate_d": round(rnd.uniform(8, 15), 2),
+                "hunger_rate_r": round(rnd.uniform(8, 15), 2),
+                "thirst_rate_d": round(rnd.uniform(8, 15), 2),
+                "thirst_rate_r": round(rnd.uniform(8, 15), 2),
             }
 
             self.omnis[self.omnis_key] = Omnivore(

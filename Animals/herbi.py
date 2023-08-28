@@ -31,7 +31,7 @@ class Herbivore(Animal):
             self.hunter.queued_movements.append(self.__convert_pos__(self.pos))
             self.hunter.food_point = self.__convert_pos__(self.pos)
             if self.hunter.pos == self.pos:
-                self.hunter.hunger -= 35 * (2 - self.hunter.hunger_rate)
+                self.hunter.hunger -= 350 * (20 - self.hunter.hunger_rate)
                 self.__cleanup_on_death__()
                 return False
 
