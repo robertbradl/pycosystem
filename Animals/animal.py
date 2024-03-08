@@ -66,7 +66,7 @@ class Animal(Tile):
             self.mate.mate_pos = None
             self.mate.queued_movements = []
 
-    def alive(self) -> bool or list:
+    def alive(self) -> bool or list: # type: ignore
         """This is the main function for every animal. It handles the movement, food and water search as well as mating and eating/drinking.
 
         Returns:

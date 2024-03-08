@@ -6,6 +6,7 @@ from World.tile import Tile
 from Animals.herbi import Herbivore
 from Animals.carni import Carnivore
 from Animals.omni import Omnivore
+from generator import generate_map
 
 
 class World:
@@ -177,9 +178,11 @@ class World:
         """Creates the map from the CSV-file.
         """
         # reading map contents
-        with open("World/map_random.csv") as csvfile:
+        """ with open("World/map_random.csv") as csvfile:
             reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC)
-            self.map.extend(iter(reader))
+            self.map.extend(iter(reader)) """
+        
+        self.map = generate_map()
 
         # converts CSV to positions and draws the corresponding tile
         for row_index, row in enumerate(self.map):

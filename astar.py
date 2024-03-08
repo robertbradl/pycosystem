@@ -79,7 +79,7 @@ def find_path(grid: list, start: tuple, end: tuple) -> list:
         end (tuple): end point
 
     Returns:
-        list: path containing the path, if none was found an empty one is returned
+        list: list containing the path, if none was found an empty one is returned
     """
     if start == end:
         return [end]
@@ -100,7 +100,7 @@ def find_path(grid: list, start: tuple, end: tuple) -> list:
     score_f = {
         (col_index, row_index): float("inf")
         for row_index, row in enumerate(grid)
-        for col_index, x in enumerate(row)
+        for col_index, _ in enumerate(row)
     }
     score_f[start] = __manhatten_distance__(start, end)
 
