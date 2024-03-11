@@ -184,7 +184,7 @@ class World:
         
         self.map = generate_map()
 
-        # converts CSV to positions and draws the corresponding tile
+        # converts array to positions and draws the corresponding tile
         for row_index, row in enumerate(self.map):
             for col_index, col in enumerate(row):
                 x = col_index * TILESIZE
@@ -192,6 +192,8 @@ class World:
                 if col == 2.0:  # grass tiles
                     Tile((x, y), self.images["grass"], [self.world_sprites])
                 elif col == 0.0:  # berry tiles
+                    # there needs to be a grass tile placed under the berry bush
+                    Tile((x, y), self.images["grass"], [self.world_sprites])
                     Tile((x, y), self.images["berry"], [self.world_sprites])
                 elif col == 5.0:  # water tiles
                     Tile((x, y), self.images["water"], [self.world_sprites])
@@ -207,7 +209,7 @@ class World:
                     Tile((x, y), self.images["grass"], [self.world_sprites])
                     self.__make_omnivore__((x, y))
                 else:  # this shouldn't happen
-                    print(f"Error: Unknown value in CSV at: {(x, y)}. Exiting program.")
+                    print(f"Error: Unknown value in array at: {(x, y)}. Exiting program.")
                     exit(1)
 
     def run(self) -> None:

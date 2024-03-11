@@ -39,9 +39,9 @@ def __get_neighbors__(p: tuple, end: tuple, map: list) -> list:
 
     if p[1] != 0 and (map[up[1]][up[0]] != 5.0 or up == end):
         neighbors.append(up)
-    if p[0] != 199 and (map[right[1]][right[0]] != 5.0 or right == end):
+    if p[0] != (MAPSIZE-1) and (map[right[1]][right[0]] != 5.0 or right == end):
         neighbors.append(right)
-    if p[1] != 199 and (map[down[1]][down[0]] != 5.0 or down == end):
+    if p[1] != (MAPSIZE-1) and (map[down[1]][down[0]] != 5.0 or down == end):
         neighbors.append(down)
     if p[0] != 0 and (map[left[1]][left[0]] != 5.0 or left == end):
         neighbors.append(left)

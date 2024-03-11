@@ -58,9 +58,37 @@ def generate_plot() -> list:
 def generate_map() -> list:
     p = generate_plot()
     randmap = np.zeros((50, 50))
+    land_tiles = []
     for y, x in itertools.product(range(50), range(50)):
-        randmap[x][y] = 2.0 if -0.05 < p[x][y] < 0.4 else 5.0
+        if -0.05 < p[y][x] < 0.4:
+            randmap[y][x] = 2.0
+            land_tiles.append((y, x))
+        else:
+            randmap[y][x] = 5.0
+    b_needed = int(len(land_tiles) * 0.03)
+    h_needed = int(len(land_tiles) * 0.04)
+    c_needed = int(len(land_tiles) * 0.02)
+    o_needed = int(len(land_tiles) * 0.01)
+    for _ in range(b_needed):
+        coord = rnd.choice(land_tiles)
+        land_tiles.remove(coord)
+        randmap[coord[0]][coord[1]] = 0.0
 
+    for _ in range(h_needed):
+        coord = rnd.choice(land_tiles)
+        land_tiles.remove(coord)
+        randmap[coord[0]][coord[1]] = 3.0
+
+    for _ in range(c_needed):
+        coord = rnd.choice(land_tiles)
+        land_tiles.remove(coord)
+        randmap[coord[0]][coord[1]] = 1.0
+
+    for _ in range(o_needed):
+        coord = rnd.choice(land_tiles)
+        land_tiles.remove(coord)
+        randmap[coord[0]][coord[1]] = 4.0
+    
     return randmap
 
 

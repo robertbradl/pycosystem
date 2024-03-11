@@ -66,7 +66,7 @@ class Animal(Tile):
             self.mate.mate_pos = None
             self.mate.queued_movements = []
 
-    def alive(self) -> bool or list: # type: ignore
+    def alive(self) -> bool or list:  # type: ignore
         """This is the main function for every animal. It handles the movement, food and water search as well as mating and eating/drinking.
 
         Returns:
@@ -111,8 +111,7 @@ class Animal(Tile):
         if self.mate:
             if not self.mate_pos:
                 # this triggers only if a animal wants to mate with this animal
-                self.mate.queued_movements.append(
-                    self.__convert_pos__(self.pos))
+                self.mate.queued_movements.append(self.__convert_pos__(self.pos))
                 self.mate.mate_pos = self.__convert_pos__(self.pos)
             elif self.mate_pos == self.__convert_pos__(self.pos):
                 return self.__mating_process__(self.genomes, self.mate.genomes)
@@ -153,8 +152,12 @@ class Animal(Tile):
         Returns:
             bool: if point is water true, else false
         """
-        x, y = self.__convert_pos__(pos)[0], self.__convert_pos__(pos)[1]
-        return self.map[y][x] == 5.0
+        coords = self.__convert_pos__(pos)
+        try:
+            return self.map[coords[1]][[coords[0]]] == 5.0
+        except IndexError:
+            print(f"Indexing error at {pos}. Exiting.")
+            exit(1)
 
     def __check_bounds__(self, direction: int) -> bool:
         """Checks if movement in a given direction would lead out of bounds
@@ -167,9 +170,9 @@ class Animal(Tile):
         """
         if direction == 1 and self.pos[1] != 0:
             return True
-        elif direction == 2 and self.pos[0] != 199 * TILESIZE:
+        elif direction == 2 and self.pos[0] != (MAPSIZE - 1) * TILESIZE:
             return True
-        elif direction == 3 and self.pos[1] != 199 * TILESIZE:
+        elif direction == 3 and self.pos[1] != (MAPSIZE - 1) * TILESIZE:
             return True
         elif direction == 4 and self.pos[0] != 0:
             return True
@@ -193,34 +196,22 @@ class Animal(Tile):
         """Normal/random movement function. Chooses a random direction and, if the move is valid, moves one space in that direction."""
         direction = rnd.randint(1, 4)
 
-        if (
-            direction == 1
-            and self.__check_bounds__(direction)
-            and not self.__water_tile__(tuple(np.subtract(self.pos, (0, TILESIZE))))
-        ):  # Move Up
-            self.rect.center -= pg.math.Vector2(0, TILESIZE)
-            self.pos = tuple(np.subtract(self.pos, (0, TILESIZE)))
-        elif (
-            direction == 2
-            and self.__check_bounds__(direction)
-            and not self.__water_tile__(tuple(np.add(self.pos, (TILESIZE, 0))))
-        ):  # Move Right
-            self.rect.center += pg.math.Vector2(TILESIZE, 0)
-            self.pos = tuple(np.add(self.pos, (TILESIZE, 0)))
-        elif (
-            direction == 3
-            and self.__check_bounds__(direction)
-            and not self.__water_tile__(tuple(np.add(self.pos, (0, TILESIZE))))
-        ):  # Move Down
-            self.rect.center += pg.math.Vector2(0, TILESIZE)
-            self.pos = tuple(np.add(self.pos, (0, TILESIZE)))
-        elif (
-            direction == 4
-            and self.__check_bounds__(direction)
-            and not self.__water_tile__(tuple(np.subtract(self.pos, (0, TILESIZE))))
-        ):  # Move Left
-            self.rect.center -= pg.math.Vector2(TILESIZE, 0)
-            self.pos = tuple(np.subtract(self.pos, (TILESIZE, 0)))
+        if direction == 1 and self.__check_bounds__(direction):  # Move Up
+            if not self.__water_tile__(tuple(np.subtract(self.pos, (0, TILESIZE)))):
+                self.rect.center -= pg.math.Vector2(0, TILESIZE)
+                self.pos = tuple(np.subtract(self.pos, (0, TILESIZE)))
+        elif direction == 2 and self.__check_bounds__(direction):  # Move Right
+            if not self.__water_tile__(tuple(np.add(self.pos, (TILESIZE, 0)))):
+                self.rect.center += pg.math.Vector2(TILESIZE, 0)
+                self.pos = tuple(np.add(self.pos, (TILESIZE, 0)))
+        elif direction == 3 and self.__check_bounds__(direction):  # Move Down
+            if not self.__water_tile__(tuple(np.add(self.pos, (0, TILESIZE)))):
+                self.rect.center += pg.math.Vector2(0, TILESIZE)
+                self.pos = tuple(np.add(self.pos, (0, TILESIZE)))
+        elif direction == 4 and self.__check_bounds__(direction):  # Move Left
+            if not self.__water_tile__(tuple(np.subtract(self.pos, (0, TILESIZE)))):
+                self.rect.center -= pg.math.Vector2(TILESIZE, 0)
+                self.pos = tuple(np.subtract(self.pos, (TILESIZE, 0)))
 
     def __direct_movement__(self) -> None:
         """Takes the first entry of the list of queued movements and places the animal on that position."""
@@ -251,17 +242,16 @@ class Animal(Tile):
                 start_point = (start_point[0] - 1, start_point[1])
             if start_point[1] > 0:
                 start_point = (start_point[0], start_point[1] - 1)
-            if end_point[0] < 199:
+            if end_point[0] < (MAPSIZE - 1):
                 end_point = (end_point[0] + 1, end_point[1])
-            if end_point[1] < 199:
+            if end_point[1] < (MAPSIZE - 1):
                 end_point = (end_point[0], end_point[1] + 1)
 
             # iterating through all huntable animals
             for entry in self.huntable:
                 prey_pos_conv = self.__convert_pos__(self.huntable[entry].pos)
                 if (
-                    self.__inside_range__(
-                        start_point, end_point, prey_pos_conv)
+                    self.__inside_range__(start_point, end_point, prey_pos_conv)
                     and not self.huntable[entry].hunted
                 ):
                     self.huntable[entry].hunted = True
@@ -291,9 +281,9 @@ class Animal(Tile):
                 start_point = (start_point[0] - 1, start_point[1])
             if start_point[1] > 0:
                 start_point = (start_point[0], start_point[1] - 1)
-            if end_point[0] < 199:
+            if end_point[0] < (MAPSIZE - 1):
                 end_point = (end_point[0] + 1, end_point[1])
-            if end_point[1] < 199:
+            if end_point[1] < (MAPSIZE - 1):
                 end_point = (end_point[0], end_point[1] + 1)
 
             for y in range(start_point[1], end_point[1]):
@@ -324,9 +314,9 @@ class Animal(Tile):
                 start_point = (start_point[0] - 1, start_point[1])
             if start_point[1] > 0:
                 start_point = (start_point[0], start_point[1] - 1)
-            if end_point[0] < 199:
+            if end_point[0] < (MAPSIZE - 1):
                 end_point = (end_point[0] + 1, end_point[1])
-            if end_point[1] < 199:
+            if end_point[1] < (MAPSIZE - 1):
                 end_point = (end_point[0], end_point[1] + 1)
 
             for y in range(start_point[1], end_point[1]):
@@ -355,22 +345,20 @@ class Animal(Tile):
                 start_point = (start_point[0] - 1, start_point[1])
             if start_point[1] > 0:
                 start_point = (start_point[0], start_point[1] - 1)
-            if end_point[0] < 199:
+            if end_point[0] < (MAPSIZE - 1):
                 end_point = (end_point[0] + 1, end_point[1])
-            if end_point[1] < 199:
+            if end_point[1] < (MAPSIZE - 1):
                 end_point = (end_point[0], end_point[1] + 1)
 
             for entry in self.population:
-                mate_pos_conv = self.__convert_pos__(
-                    self.population[entry].pos)
+                mate_pos_conv = self.__convert_pos__(self.population[entry].pos)
                 # checks if the entry:
                 # 1. is in range
                 # 2. doesn't have a mate
                 # 3. is not itself
                 # 4. has reached mating age
                 if (
-                    self.__inside_range__(
-                        start_point, end_point, mate_pos_conv)
+                    self.__inside_range__(start_point, end_point, mate_pos_conv)
                     and not self.population[entry].mate
                     and self.population[entry].key != self.key
                     and self.population[entry].age > 100
