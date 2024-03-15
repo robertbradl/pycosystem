@@ -19,7 +19,7 @@ class Omnivore(Animal):
         self.prey = None
         self.prey_pos = None
 
-    def alive(self) -> bool or list:
+    def alive(self) -> bool or list: # type: ignore
         if value := super().alive():
             return value
         self.__cleanup_on_death__()

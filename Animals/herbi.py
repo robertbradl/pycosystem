@@ -26,7 +26,7 @@ class Herbivore(Animal):
             self.hunter.queued_movements = []
             self.hunter.path_length = None
 
-    def alive(self) -> bool or list:
+    def alive(self) -> bool or list: # type: ignore
         if self.hunted:
             self.hunter.queued_movements.append(self.__convert_pos__(self.pos))
             self.hunter.food_point = self.__convert_pos__(self.pos)

@@ -153,11 +153,7 @@ class Animal(Tile):
             bool: if point is water true, else false
         """
         coords = self.__convert_pos__(pos)
-        try:
-            return self.map[coords[1]][[coords[0]]] == 5.0
-        except IndexError:
-            print(f"Indexing error at {pos}. Exiting.")
-            exit(1)
+        return self.map[coords[1]][[coords[0]]] == 5.0
 
     def __check_bounds__(self, direction: int) -> bool:
         """Checks if movement in a given direction would lead out of bounds
@@ -197,19 +193,19 @@ class Animal(Tile):
         direction = rnd.randint(1, 4)
 
         if direction == 1 and self.__check_bounds__(direction):  # Move Up
-            if not self.__water_tile__(tuple(np.subtract(self.pos, (0, TILESIZE)))):
+            if not self.__water_tile__((self.pos[0], self.pos[1] - TILESIZE)):  # tuple(np.subtract(self.pos, (0, TILESIZE)))
                 self.rect.center -= pg.math.Vector2(0, TILESIZE)
                 self.pos = tuple(np.subtract(self.pos, (0, TILESIZE)))
         elif direction == 2 and self.__check_bounds__(direction):  # Move Right
-            if not self.__water_tile__(tuple(np.add(self.pos, (TILESIZE, 0)))):
+            if not self.__water_tile__((self.pos[0] + TILESIZE, self.pos[1])):
                 self.rect.center += pg.math.Vector2(TILESIZE, 0)
                 self.pos = tuple(np.add(self.pos, (TILESIZE, 0)))
         elif direction == 3 and self.__check_bounds__(direction):  # Move Down
-            if not self.__water_tile__(tuple(np.add(self.pos, (0, TILESIZE)))):
+            if not self.__water_tile__((self.pos[0], self.pos[1] + TILESIZE)):
                 self.rect.center += pg.math.Vector2(0, TILESIZE)
                 self.pos = tuple(np.add(self.pos, (0, TILESIZE)))
         elif direction == 4 and self.__check_bounds__(direction):  # Move Left
-            if not self.__water_tile__(tuple(np.subtract(self.pos, (0, TILESIZE)))):
+            if not self.__water_tile__((self.pos[0] - TILESIZE, self.pos[1])):
                 self.rect.center -= pg.math.Vector2(TILESIZE, 0)
                 self.pos = tuple(np.subtract(self.pos, (TILESIZE, 0)))
 
@@ -321,7 +317,9 @@ class Animal(Tile):
 
             for y in range(start_point[1], end_point[1]):
                 for x in range(start_point[0], end_point[0]):
-                    if self.map[y][x] == 5:  # checks for water entry
+                    if self.map[y][x] == 5 and self.__valid_tile__(
+                        x, y
+                    ):  # checks for water entry
                         self.water_found = True
                         self.water_point = (x, y)
                         break
@@ -335,6 +333,19 @@ class Animal(Tile):
             self.queued_movements = ast.find_path(
                 self.map, self.__convert_pos__(self.pos), self.water_point
             )
+
+    def __valid_tile__(self, x: int, y: int) -> bool:
+        c = 0
+        if y == 0 or self.map[y - 1][x] == 5.0:  # Checking up
+            c += 1
+        if y == (MAPSIZE - 1) or self.map[y + 1][x] == 5.0:  # Checking down
+            c += 1
+        if x == 0 or self.map[y][x - 1] == 5.0:  # Checking left
+            c += 1
+        if x == (MAPSIZE - 1) or self.map[y][x + 1] == 5.0:  # checking right
+            c += 1
+
+        return c != 4
 
     def __find_mate__(self) -> None:
         """Checks if an appropriate animal is in range, searches a path to it and changes the corresponding variables."""

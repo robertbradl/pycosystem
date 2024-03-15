@@ -212,7 +212,7 @@ class World:
                     print(f"Error: Unknown value in array at: {(x, y)}. Exiting program.")
                     exit(1)
 
-    def run(self) -> None:
+    def run(self, r_state: bool) -> None:
         """Runs the simulation, meaning this function updates the map, triggers the alive function of every animal and acts accordingly.
         """
         # updating the sprites
@@ -220,45 +220,46 @@ class World:
         self.alive_sprites.draw(self.display_surface)
 
         live_herbs = self.font.render(
-            f"Alive herbivores: {len(self.herbis)}", False, (0, 0, 0)
+            f"Alive herbivores: {len(self.herbis)}", True, (0, 0, 0)
         )
         live_carns = self.font.render(
-            f"Alive carnivores:  {len(self.carnis)}", False, (0, 0, 0)
+            f"Alive carnivores:  {len(self.carnis)}", True, (0, 0, 0)
         )
         live_ommnis = self.font.render(
-            f"Alive omnivores:  {len(self.omnis)}", False, (0, 0, 0)
+            f"Alive omnivores:  {len(self.omnis)}", True, (0, 0, 0)
         )
         self.display_surface.blit(live_herbs, (10, 10))
         self.display_surface.blit(live_carns, (10, 35))
         self.display_surface.blit(live_ommnis, (10, 60))
 
         # alive check and process for every sprite/animal
-        for animal in self.alive_sprites:
-            value = animal.alive()
-            # alive function returns either a boolean or a list if the animal mated
-            if type(value) == bool:
-                # check if alive or dead
-                if not value:
-                    if animal.type == "herbi":
-                        self.herbis.pop(animal.key)
-                    elif animal.type == "carni":
-                        self.carnis.pop(animal.key)
-                    elif animal.type == "omni":
-                        self.omnis.pop(animal.key)
-                    else:  # this shouldn't happen
-                        print(
-                            "Error: Animal of unknown type encountered during removal process. Exiting program."
-                        )
-                        exit(1)
-                    animal.kill()  # removes sprite from all groups
-            elif value[0] == "herbi":
-                self.__make_herbivore__(value[1], value[2])
-            elif value[0] == "carni":
-                self.__make_carnivore__(value[1], value[2])
-            elif value[0] == "omni":
-                self.__make_omnivore__(value[1], value[2])
-            else:  # this shouldn't happen
-                print(
-                    "Error: Animal of unknown type encountered during creation process. Exiting program."
-                )
-                exit(1)
+        if r_state:
+            for animal in self.alive_sprites:
+                value = animal.alive()
+                # alive function returns either a boolean or a list if the animal mated
+                if type(value) == bool:
+                    # check if alive or dead
+                    if not value:
+                        if animal.type == "herbi":
+                            self.herbis.pop(animal.key)
+                        elif animal.type == "carni":
+                            self.carnis.pop(animal.key)
+                        elif animal.type == "omni":
+                            self.omnis.pop(animal.key)
+                        else:  # this shouldn't happen
+                            print(
+                                "Error: Animal of unknown type encountered during removal process. Exiting program."
+                            )
+                            exit(1)
+                        animal.kill()  # removes sprite from all groups
+                elif value[0] == "herbi":
+                    self.__make_herbivore__(value[1], value[2])
+                elif value[0] == "carni":
+                    self.__make_carnivore__(value[1], value[2])
+                elif value[0] == "omni":
+                    self.__make_omnivore__(value[1], value[2])
+                else:  # this shouldn't happen
+                    print(
+                        "Error: Animal of unknown type encountered during creation process. Exiting program."
+                    )
+                    exit(1)
