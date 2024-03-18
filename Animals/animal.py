@@ -43,6 +43,7 @@ class Animal(Tile):
         self.hunger_rate = self.genomes["hunger_rate_d"]
         self.thirst = 0
         self.thirst_rate = self.genomes["thirst_rate_d"]
+        self.set_timer = 0
 
         # movement related variables
         self.queued_movements = []
@@ -74,6 +75,10 @@ class Animal(Tile):
         """
         self.age += 1
 
+        if self.set_timer:
+            self.set_timer -= 1
+            return self.hunger < 1000 and self.thirst < 1000 and self.age < self.max_age
+
         # mating cooldown
         if self.cooldown:
             if self.cooldown >= 100:
@@ -103,10 +108,12 @@ class Animal(Tile):
             self.food_found = False
             self.food_point = None
             self.hunger -= 350 * (20 - self.hunger_rate)
+            self.set_timer = 10
         elif self.__convert_pos__(self.pos) == self.water_point:
             self.water_found = False
             self.water_point = None
             self.thirst -= 350 * (20 - self.thirst_rate)
+            self.set_timer = 10
 
         if self.mate:
             if not self.mate_pos:

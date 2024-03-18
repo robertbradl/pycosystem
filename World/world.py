@@ -212,7 +212,7 @@ class World:
                     print(f"Error: Unknown value in array at: {(x, y)}. Exiting program.")
                     exit(1)
 
-    def run(self, r_state: bool) -> None:
+    def run(self, r_state: bool, t_state: bool) -> None:
         """Runs the simulation, meaning this function updates the map, triggers the alive function of every animal and acts accordingly.
         """
         # updating the sprites
@@ -220,20 +220,20 @@ class World:
         self.alive_sprites.draw(self.display_surface)
 
         live_herbs = self.font.render(
-            f"Alive herbivores: {len(self.herbis)}", True, (0, 0, 0)
+            f"Alive herbivores: {len(self.herbis)}", True, (255, 255, 255)
         )
         live_carns = self.font.render(
-            f"Alive carnivores:  {len(self.carnis)}", True, (0, 0, 0)
+            f"Alive carnivores:  {len(self.carnis)}", True, (255, 255, 255)
         )
         live_ommnis = self.font.render(
-            f"Alive omnivores:  {len(self.omnis)}", True, (0, 0, 0)
+            f"Alive omnivores:  {len(self.omnis)}", True, (255, 255, 255)
         )
-        self.display_surface.blit(live_herbs, (10, 10))
-        self.display_surface.blit(live_carns, (10, 35))
-        self.display_surface.blit(live_ommnis, (10, 60))
+        self.display_surface.blit(live_herbs, (10, 1015))
+        self.display_surface.blit(live_carns, (10, 1040))
+        self.display_surface.blit(live_ommnis, (10, 1065))
 
         # alive check and process for every sprite/animal
-        if r_state:
+        if r_state and t_state:
             for animal in self.alive_sprites:
                 value = animal.alive()
                 # alive function returns either a boolean or a list if the animal mated
@@ -251,6 +251,7 @@ class World:
                                 "Error: Animal of unknown type encountered during removal process. Exiting program."
                             )
                             exit(1)
+                        animal.genomes
                         animal.kill()  # removes sprite from all groups
                 elif value[0] == "herbi":
                     self.__make_herbivore__(value[1], value[2])
