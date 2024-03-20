@@ -121,6 +121,7 @@ class Animal(Tile):
                 self.mate.queued_movements.append(self.__convert_pos__(self.pos))
                 self.mate.mate_pos = self.__convert_pos__(self.pos)
             elif self.mate_pos == self.__convert_pos__(self.pos):
+                self.set_timer = 10
                 return self.__mating_process__(self.genomes, self.mate.genomes)
 
         # increasing hunger and thirst

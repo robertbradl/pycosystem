@@ -2,6 +2,7 @@ import itertools
 import numpy as np
 import random as rnd
 import matplotlib.pyplot as plt
+from settings import *
 
 
 def __perlin__(x: np.ndarray, y: np.ndarray, seed: int = 0) -> list:
@@ -25,13 +26,13 @@ def __perlin__(x: np.ndarray, y: np.ndarray, seed: int = 0) -> list:
     xi, yi = x.astype(int), y.astype(int)  # grid coords
     xf, yf = x - xi, y - yi  # distance vector coords
 
-    u, v = __fade__(xf), __fade__(yf)  # fade function
-
     # gradient vector coordinates top left, top right, bottom left, bottom right
     n00 = __gradient__(p[p[xi] + yi], xf, yf)
     n01 = __gradient__(p[p[xi] + yi + 1], xf, yf - 1)
     n11 = __gradient__(p[p[xi + 1] + yi + 1], xf - 1, yf - 1)
     n10 = __gradient__(p[p[xi + 1] + yi], xf - 1, yf)
+
+    u, v = __fade__(xf), __fade__(yf)  # fade function
 
     # linear interpolation
     x1 = __lerp__(n00, n10, u)
@@ -110,10 +111,10 @@ def generate_map() -> list:
             land_tiles.append((y, x))
         else:
             randmap[y][x] = 5.0
-    b_needed = int(len(land_tiles) * 0.03)
-    h_needed = int(len(land_tiles) * 0.04)
-    c_needed = int(len(land_tiles) * 0.02)
-    o_needed = int(len(land_tiles) * 0.01)
+    b_needed = int(len(land_tiles) * B_PERCENT)
+    h_needed = int(len(land_tiles) * H_PERCENT)
+    c_needed = int(len(land_tiles) * C_PERCENT)
+    o_needed = int(len(land_tiles) * O_PERCENT)
     for _ in range(b_needed):
         coord = rnd.choice(land_tiles)
         land_tiles.remove(coord)

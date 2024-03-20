@@ -14,17 +14,20 @@ class Simulation:
         self.clock = pg.time.Clock()
 
         self.world = World()
-        self.r_state = True
+        self.r_state = True # run state for pause button
 
         self.font = pg.font.SysFont("arial", 20, True)
+        
+        # button colors
         self.light_color = (183, 192, 154)
         self.dark_color = (127, 133, 109)
+
         self.b1_texts = ["Pause", "Unpause"]
-        self.animal_event = pg.USEREVENT+1
+        self.animal_event = pg.USEREVENT + 1
 
     # run process
     def run(self) -> None:
-        pg.time.set_timer(self.animal_event, int(1000/SPEED))
+        pg.time.set_timer(self.animal_event, int(1000 / SPEED)) # timer for animal events
         run = True
         while run:
             mouse = pg.mouse.get_pos()
@@ -33,28 +36,32 @@ class Simulation:
                 if event.type == pg.QUIT:
                     run = False
                 elif event.type == pg.MOUSEBUTTONDOWN:
-                    if (WIDTH / 2 - 100 <= mouse[0] <= WIDTH / 2 + 100 and HEIGHT - 75 <= mouse[1] <= HEIGHT - 25):  # button 1
+                    if (
+                        WIDTH / 2 - 100 <= mouse[0] <= WIDTH / 2 + 100
+                        and HEIGHT - 75 <= mouse[1] <= HEIGHT - 25
+                    ):  # button 1
                         self.r_state = not self.r_state
                 elif event.type == self.animal_event:
                     self.world.run(self.r_state, True)
-            
+
             self.screen.fill("black")
             self.world.run(self.r_state, False)
             self.__buttons__()
 
-            print(self.clock.get_fps())
             pg.display.update()
             self.clock.tick(FPS)
-        
+
         pg.quit()
 
     def __buttons__(self) -> None:
-        """Draws all buttons.
-        """
+        """Draws all buttons."""
         mouse = pg.mouse.get_pos()
 
         # color for pause/unpause button
-        if (WIDTH / 2 - 100 <= mouse[0] <= WIDTH / 2 + 100 and HEIGHT - 75 <= mouse[1] <= HEIGHT - 25):
+        if (
+            WIDTH / 2 - 100 <= mouse[0] <= WIDTH / 2 + 100
+            and HEIGHT - 75 <= mouse[1] <= HEIGHT - 25
+        ):
             button1 = pg.draw.rect(
                 self.screen, self.light_color, [WIDTH / 2 - 100, HEIGHT - 75, 200, 50]
             )

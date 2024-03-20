@@ -1,6 +1,5 @@
 import pygame as pg
 import random as rnd
-import csv
 from settings import *
 from World.tile import Tile
 from Animals.herbi import Herbivore
@@ -15,6 +14,7 @@ class World:
     def __init__(self) -> None:
         # grab display surface
         self.display_surface = pg.display.get_surface()
+        self.font = pg.font.SysFont("arial", 20, True)
 
         self.world_sprites = pg.sprite.Group()
         self.alive_sprites = pg.sprite.Group()
@@ -44,7 +44,6 @@ class World:
         # map setup
         self.__create_map__()
 
-        self.font = pg.font.SysFont("arial", 20, True)
 
     # MAKE ANIMAL SECTION
 
@@ -112,10 +111,10 @@ class World:
                 "animal_type": "herbi",
                 "max_age_d": rnd.randint(500, 600),
                 "max_age_r": rnd.randint(500, 600),
-                "hunger_rate_d": round(rnd.uniform(5,10), 2),
-                "hunger_rate_r": round(rnd.uniform(5,10), 2),
-                "thirst_rate_d": round(rnd.uniform(5,10), 2),
-                "thirst_rate_r": round(rnd.uniform(5,10), 2),
+                "hunger_rate_d": round(rnd.uniform(5, 10), 2),
+                "hunger_rate_r": round(rnd.uniform(5, 10), 2),
+                "thirst_rate_d": round(rnd.uniform(5, 10), 2),
+                "thirst_rate_r": round(rnd.uniform(5, 10), 2),
             }
 
             self.herbis[self.herb_key] = Herbivore(
@@ -175,13 +174,7 @@ class World:
     # END OF MAKE ANIMAL SECTION
 
     def __create_map__(self) -> None:
-        """Creates the map from the CSV-file.
-        """
-        # reading map contents
-        """ with open("World/map_random.csv") as csvfile:
-            reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC)
-            self.map.extend(iter(reader)) """
-        
+        """Creates the map from array the generator module created."""
         self.map = generate_map()
 
         # converts array to positions and draws the corresponding tile
@@ -209,12 +202,13 @@ class World:
                     Tile((x, y), self.images["grass"], [self.world_sprites])
                     self.__make_omnivore__((x, y))
                 else:  # this shouldn't happen
-                    print(f"Error: Unknown value in array at: {(x, y)}. Exiting program.")
+                    print(
+                        f"Error: Unknown value in array at: {(x, y)}. Exiting program."
+                    )
                     exit(1)
 
     def run(self, r_state: bool, t_state: bool) -> None:
-        """Runs the simulation, meaning this function updates the map, triggers the alive function of every animal and acts accordingly.
-        """
+        """Runs the simulation, meaning this function updates the map, triggers the alive function of every animal and acts accordingly."""
         # updating the sprites
         self.world_sprites.draw(self.display_surface)
         self.alive_sprites.draw(self.display_surface)
