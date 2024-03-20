@@ -4,7 +4,7 @@ import random as rnd
 import matplotlib.pyplot as plt
 
 
-def __perlin__(x, y, seed=0) -> list:
+def __perlin__(x: np.ndarray, y: np.ndarray, seed: int = 0) -> list:
     """Generates Perlin noise for given x and y coordinates.
 
     Args:
@@ -16,14 +16,16 @@ def __perlin__(x, y, seed=0) -> list:
         list: The generated Perlin noise values.
     """
     np.random.seed(seed)
-    p = np.arange(256, dtype=int) # permutation array
-    np.random.shuffle(p) # shuffle shuffle permutations
-    p = np.stack([p, p]).flatten() # 2d array turned 1d for easy dot product interpolations
+    p = np.arange(256, dtype=int)  # permutation array
+    np.random.shuffle(p)  # shuffle shuffle permutations
+    p = np.stack(
+        [p, p]
+    ).flatten()  # 2d array turned 1d for easy dot product interpolations
 
-    xi, yi = x.astype(int), y.astype(int) # grid coords
-    xf, yf = x - xi, y - yi # distance vector coords
+    xi, yi = x.astype(int), y.astype(int)  # grid coords
+    xf, yf = x - xi, y - yi  # distance vector coords
 
-    u, v = __fade__(xf), __fade__(yf) # fade function 
+    u, v = __fade__(xf), __fade__(yf)  # fade function
 
     # gradient vector coordinates top left, top right, bottom left, bottom right
     n00 = __gradient__(p[p[xi] + yi], xf, yf)
@@ -37,9 +39,9 @@ def __perlin__(x, y, seed=0) -> list:
     return __lerp__(x1, x2, v)
 
 
-def __lerp__(a, b, x) -> float:
+def __lerp__(a: float, b: float, x: float) -> float:
     """Linear interpolation.
-    
+
     Args:
         a (float): The start value.
         b (float): The end value.
@@ -51,7 +53,7 @@ def __lerp__(a, b, x) -> float:
     return a + x * (b - a)
 
 
-def __fade__(t) -> float:
+def __fade__(t: float) -> float:
     """Calculates the fade value for Perlin noise.
 
     Args:
@@ -63,7 +65,7 @@ def __fade__(t) -> float:
     return 6 * t**5 - 15 * t**4 + 10 * t**3
 
 
-def __gradient__(h, x, y):
+def __gradient__(h: int, x: float, y: float):
     """Calculates the gradient vectors and the dot product.
 
     Args:
@@ -131,13 +133,12 @@ def generate_map() -> list:
         coord = rnd.choice(land_tiles)
         land_tiles.remove(coord)
         randmap[coord[0]][coord[1]] = 4.0
-    
+
     return randmap
 
 
 def main() -> None:
-    """Main function to generate and display a plot of Perlin noise.
-    """
+    """Main function to generate and display a plot of Perlin noise."""
     p = generate_plot()
     plt.imshow(p, origin="upper")
     plt.show()
