@@ -4,46 +4,84 @@ import random as rnd
 import matplotlib.pyplot as plt
 
 
-def __perlin__(x, y, seed=0) -> float:
+def __perlin__(x, y, seed=0) -> list:
+    """Generates Perlin noise for given x and y coordinates.
 
+    Args:
+        x (numpy.ndarray): The x coordinates.
+        y (numpy.ndarray): The y coordinates.
+        seed (int, optional): The random seed. Defaults to 0.
+
+    Returns:
+        list: The generated Perlin noise values.
+    """
     np.random.seed(seed)
-    p = np.arange(256, dtype=int)
-    np.random.shuffle(p)
-    p = np.stack([p, p]).flatten()
+    p = np.arange(256, dtype=int) # permutation array
+    np.random.shuffle(p) # shuffle shuffle permutations
+    p = np.stack([p, p]).flatten() # 2d array turned 1d for easy dot product interpolations
 
-    xi, yi = x.astype(int), y.astype(int)
-    xf, yf = x - xi, y - yi
+    xi, yi = x.astype(int), y.astype(int) # grid coords
+    xf, yf = x - xi, y - yi # distance vector coords
 
-    u, v = __fade__(xf), __fade__(yf)
+    u, v = __fade__(xf), __fade__(yf) # fade function 
 
+    # gradient vector coordinates top left, top right, bottom left, bottom right
     n00 = __gradient__(p[p[xi] + yi], xf, yf)
     n01 = __gradient__(p[p[xi] + yi + 1], xf, yf - 1)
     n11 = __gradient__(p[p[xi + 1] + yi + 1], xf - 1, yf - 1)
     n10 = __gradient__(p[p[xi + 1] + yi], xf - 1, yf)
 
+    # linear interpolation
     x1 = __lerp__(n00, n10, u)
     x2 = __lerp__(n01, n11, u)
     return __lerp__(x1, x2, v)
 
 
 def __lerp__(a, b, x) -> float:
-    """linear interpolation"""
+    """Linear interpolation.
+    
+    Args:
+        a (float): The start value.
+        b (float): The end value.
+        x (float): The interpolation factor.
+
+    Returns:
+        float: The interpolated value.
+    """
     return a + x * (b - a)
 
 
 def __fade__(t) -> float:
-    """6t^5 - 15t^4 + 10t^3"""
+    """Calculates the fade value for Perlin noise.
+
+    Args:
+        t (float): The input value.
+
+    Returns:
+        float: The calculated fade value.
+    """
     return 6 * t**5 - 15 * t**4 + 10 * t**3
 
 
 def __gradient__(h, x, y):
-    """grad converts h to the right gradient vector and return the dot product with (x,y)"""
+    """Calculates the gradient vectors and the dot product.
+
+    Args:
+        h (int): The hash value.
+        x (float): The x coordinate.
+        y (float): The y coordinate.
+    """
     vectors = np.array([[0, 1], [0, -1], [1, 0], [-1, 0]])
     g = vectors[h % 4]
     return g[:, :, 0] * x + g[:, :, 1] * y
 
 
 def generate_plot() -> list:
+    """Generates a plot of Perlin noise.
+
+    Returns:
+        list: The generated plot.
+    """
     p = np.zeros((50, 50))
     for i in range(4):
         freq = 2**i
@@ -56,6 +94,11 @@ def generate_plot() -> list:
 
 
 def generate_map() -> list:
+    """Generates a map using Perlin noise.
+
+    Returns:
+        list: The generated map.
+    """
     p = generate_plot()
     randmap = np.zeros((50, 50))
     land_tiles = []
@@ -93,6 +136,8 @@ def generate_map() -> list:
 
 
 def main() -> None:
+    """Main function to generate and display a plot of Perlin noise.
+    """
     p = generate_plot()
     plt.imshow(p, origin="upper")
     plt.show()
