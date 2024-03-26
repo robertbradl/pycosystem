@@ -23,21 +23,21 @@ def __perlin__(x: np.ndarray, y: np.ndarray, seed: int = 0) -> list:
         [p, p]
     ).flatten()  # 2d array turned 1d for easy dot product interpolations
 
-    xi, yi = x.astype(int), y.astype(int)  # grid coords
-    xf, yf = x - xi, y - yi  # distance vector coords
+    xg, yg = x.astype(int), y.astype(int)  # grid coords
+    xv, yv = x - xg, y - yg  # distance vector coords
 
     # gradient vector coordinates top left, top right, bottom left, bottom right
-    n00 = __gradient__(p[p[xi] + yi], xf, yf)
-    n01 = __gradient__(p[p[xi] + yi + 1], xf, yf - 1)
-    n11 = __gradient__(p[p[xi + 1] + yi + 1], xf - 1, yf - 1)
-    n10 = __gradient__(p[p[xi + 1] + yi], xf - 1, yf)
+    tl = __gradient__(p[p[xg] + yg], xv, yv)
+    tr = __gradient__(p[p[xg] + yg + 1], xv, yv - 1)
+    bl = __gradient__(p[p[xg + 1] + yg + 1], xv - 1, yv - 1)
+    br = __gradient__(p[p[xg + 1] + yg], xv - 1, yv)
 
-    u, v = __fade__(xf), __fade__(yf)  # fade function
+    f1, f2 = __fade__(xv), __fade__(yv)  # fade function
 
     # linear interpolation
-    x1 = __lerp__(n00, n10, u)
-    x2 = __lerp__(n01, n11, u)
-    return __lerp__(x1, x2, v)
+    x1 = __lerp__(tl, br, f1)
+    x2 = __lerp__(tr, bl, f1)
+    return __lerp__(x1, x2, f2)
 
 
 def __lerp__(a: float, b: float, x: float) -> float:
@@ -79,8 +79,11 @@ def __gradient__(h: int, x: float, y: float):
     return g[:, :, 0] * x + g[:, :, 1] * y
 
 
-def generate_plot() -> list:
+def generate_plot(gseed: int = None) -> list:
     """Generates a plot of Perlin noise.
+
+    Args:
+        gseed (int, optional): The random seed in case a map needs to be recreated. Defaults to none.
 
     Returns:
         list: The generated plot.
@@ -90,19 +93,22 @@ def generate_plot() -> list:
         freq = 2**i
         lin = np.linspace(0, freq, 50, endpoint=False)
         x, y = np.meshgrid(lin, lin)
-        seed = rnd.randint(0, 999999999)
+        seed = rnd.randint(0, 999999999) if gseed is None else gseed
         p = __perlin__(x, y, seed=seed) / freq + p
 
     return p
 
 
-def generate_map() -> list:
+def generate_map(gseed: int = None) -> list:
     """Generates a map using Perlin noise.
+
+    Args:
+        gseed (int, optional): The random seed in case a map needs to be recreated. Defaults to none.
 
     Returns:
         list: The generated map.
     """
-    p = generate_plot()
+    p = generate_plot(gseed)
     randmap = np.zeros((50, 50))
     land_tiles = []
     for y, x in itertools.product(range(50), range(50)):

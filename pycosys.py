@@ -4,8 +4,9 @@ from World.world import World
 
 
 class Simulation:
-    # general setup
+
     def __init__(self) -> None:
+        """Initializes the Simulation object with necessary setup."""
         pg.init()
         pg.font.init()
 
@@ -14,10 +15,10 @@ class Simulation:
         self.clock = pg.time.Clock()
 
         self.world = World()
-        self.r_state = True # run state for pause button
+        self.r_state = True  # run state for pause button
 
         self.font = pg.font.SysFont("arial", 20, True)
-        
+
         # button colors
         self.light_color = (183, 192, 154)
         self.dark_color = (127, 133, 109)
@@ -25,9 +26,11 @@ class Simulation:
         self.b1_texts = ["Pause", "Unpause"]
         self.animal_event = pg.USEREVENT + 1
 
-    # run process
     def run(self) -> None:
-        pg.time.set_timer(self.animal_event, int(1000 / SPEED)) # timer for animal events
+        """Runs the simulation process."""
+        pg.time.set_timer(
+            self.animal_event, int(1000 / SPEED)
+        )  # timer for animal events
         run = True
         while run:
             mouse = pg.mouse.get_pos()

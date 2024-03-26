@@ -17,16 +17,17 @@ class Animal(Tile):
         sprite: str,
         group,
     ) -> None:
-        """Initalizing function.
+        """Initializes an Animal object with specific characteristics.
 
         Args:
-            pos (tuple): position the animal gets spawned at
-            genomes (dict): the genome values of the animal
-            population (dict): all alive animals of the same type
-            map (list):
-            key (int): key which correspones to the dictionary entry of the animal
-            sprite (str):
-            group (_type_):
+            pos (tuple): The position of the Animal.
+            genomes (dict): Dictionary of genetic information.
+            population (dict): Dictionary of population data.
+            map (list): The map configuration.
+            key (int): Key value for the Animal.
+            sprite (str): The sprite representing the Animal.
+            group: The group the Animal belongs to.
+
         """
         super().__init__(pos, sprite, group)
 
@@ -201,7 +202,9 @@ class Animal(Tile):
         direction = rnd.randint(1, 4)
 
         if direction == 1 and self.__check_bounds__(direction):  # Move Up
-            if not self.__water_tile__((self.pos[0], self.pos[1] - TILESIZE)):  # tuple(np.subtract(self.pos, (0, TILESIZE)))
+            if not self.__water_tile__(
+                (self.pos[0], self.pos[1] - TILESIZE)
+            ):  # tuple(np.subtract(self.pos, (0, TILESIZE)))
                 self.rect.center -= pg.math.Vector2(0, TILESIZE)
                 self.pos = tuple(np.subtract(self.pos, (0, TILESIZE)))
         elif direction == 2 and self.__check_bounds__(direction):  # Move Right
@@ -343,6 +346,15 @@ class Animal(Tile):
             )
 
     def __valid_tile__(self, x: int, y: int) -> bool:
+        """Checks if the tile at the given coordinates is valid for movement.
+
+        Args:
+            x (int): The x-coordinate of the tile.
+            y (int): The y-coordinate of the tile.
+
+        Returns:
+            bool: True if the tile is valid for movement, False otherwise.
+        """
         c = 0
         if y == 0 or self.map[y - 1][x] == 5.0:  # Checking up
             c += 1

@@ -11,15 +11,20 @@ from generator import generate_map
 class World:
     """Handles the actual simulated world"""
 
-    def __init__(self) -> None:
-        # grab display surface
+    def __init__(self, map: list = None) -> None:
+        """Initializes the World object with necessary setup.
+
+        Args:
+            map (list): Optional parameter for the map configuration.
+        """
         self.display_surface = pg.display.get_surface()
         self.font = pg.font.SysFont("arial", 20, True)
 
         self.world_sprites = pg.sprite.Group()
         self.alive_sprites = pg.sprite.Group()
         self.dead_sprites = pg.sprite.Group()
-        self.map = []
+
+        self.map = generate_map() if map is None else map
 
         # dictionaries containing all alive instances of their respective animal type
         self.herbis = {}
@@ -43,7 +48,6 @@ class World:
 
         # map setup
         self.__create_map__()
-
 
     # MAKE ANIMAL SECTION
 
@@ -174,8 +178,7 @@ class World:
     # END OF MAKE ANIMAL SECTION
 
     def __create_map__(self) -> None:
-        """Creates the map from array the generator module created."""
-        self.map = generate_map()
+        """Creates the map from the array the generator module created."""
 
         # converts array to positions and draws the corresponding tile
         for row_index, row in enumerate(self.map):
@@ -207,9 +210,8 @@ class World:
                     )
                     exit(1)
 
-    def run(self, r_state: bool, t_state: bool) -> None:
-        """Runs the simulation, meaning this function updates the map, triggers the alive function of every animal and acts accordingly."""
-        # updating the sprites
+    def __update_graphics__(self) -> None:
+        """Updates the sprites on screen and the animal counters."""
         self.world_sprites.draw(self.display_surface)
         self.alive_sprites.draw(self.display_surface)
 
@@ -226,35 +228,61 @@ class World:
         self.display_surface.blit(live_carns, (10, 1040))
         self.display_surface.blit(live_ommnis, (10, 1065))
 
-        # alive check and process for every sprite/animal
-        if r_state and t_state:
-            for animal in self.alive_sprites:
-                value = animal.alive()
-                # alive function returns either a boolean or a list if the animal mated
-                if type(value) == bool:
-                    # check if alive or dead
-                    if not value:
-                        if animal.type == "herbi":
-                            self.herbis.pop(animal.key)
-                        elif animal.type == "carni":
-                            self.carnis.pop(animal.key)
-                        elif animal.type == "omni":
-                            self.omnis.pop(animal.key)
-                        else:  # this shouldn't happen
-                            print(
-                                "Error: Animal of unknown type encountered during removal process. Exiting program."
-                            )
-                            exit(1)
-                        animal.genomes
-                        animal.kill()  # removes sprite from all groups
-                elif value[0] == "herbi":
-                    self.__make_herbivore__(value[1], value[2])
-                elif value[0] == "carni":
-                    self.__make_carnivore__(value[1], value[2])
-                elif value[0] == "omni":
-                    self.__make_omnivore__(value[1], value[2])
-                else:  # this shouldn't happen
-                    print(
-                        "Error: Animal of unknown type encountered during creation process. Exiting program."
-                    )
-                    exit(1)
+    def __remove_animal(self, animal) -> None:
+        """Removes the specified animal from the corresponding animal type dictionary and kills the animal.
+
+        Args:
+            animal: The animal to be removed.
+        """
+        if animal.type == "herbi":
+            self.herbis.pop(animal.key)
+        elif animal.type == "carni":
+            self.carnis.pop(animal.key)
+        elif animal.type == "omni":
+            self.omnis.pop(animal.key)
+        else:  # this shouldn't happen
+            print(
+                "Error: Animal of unknown type encountered during removal process. Exiting program."
+            )
+            exit(1)
+        animal.kill()  # removes sprite from all groups
+
+    def __handle_mating__(self, genomes: list) -> None:
+        """Handles the mating process based on the given genomes to create specific types of animals.
+
+        Args:
+            genomes (list): List containing genetic information for mating.
+        """
+        if genomes[0] == "herbi":
+            self.__make_herbivore__(genomes[1], genomes[2])
+        elif genomes[0] == "carni":
+            self.__make_carnivore__(genomes[1], genomes[2])
+        elif genomes[0] == "omni":
+            self.__make_omnivore__(genomes[1], genomes[2])
+        else:  # this shouldn't happen
+            print(
+                "Error: Animal of unknown type encountered during creation process. Exiting program."
+            )
+            exit(1)
+
+    def run(self, r_state: bool, t_state: bool) -> None:
+        """Runs the simulation, meaning this function updates the map, triggers the alive function of every animal and acts accordingly.
+
+        Args:
+            r_state (bool): The current run_state of the simulation. If the simulation is paused, this is False.
+            t_state (bool): The current trigger of the simulation. If no event-trigger has happed in the current iteration, this is False.
+        """
+
+        self.__update_graphics__()
+
+        if not (r_state and t_state):
+            return
+        for animal in self.alive_sprites:
+            value = animal.alive()
+            # alive function returns either a boolean or a list if the animal mated
+            if type(value) == bool:
+                # check if alive or dead
+                if not value:
+                    self.__remove_animal(animal)
+            else:
+                self.__handle_mating__(value)

@@ -132,20 +132,7 @@ def find_path(grid: list, start: tuple, end: tuple) -> list:
 
 def __test__():
     """Test function to test the algorithm directly from the file."""
-    map_array = []
-    with open("World/map.csv") as csvfile:
-        reader = csv.reader(csvfile, quoting=csv.QUOTE_NONNUMERIC)
-        map_array.extend(iter(reader))
-    try:
-        p1 = (int(sys.argv[1]), int(sys.argv[2]))
-        p2 = (int(sys.argv[3]), int(sys.argv[4]))
-    except Exception:
-        p1 = (0, 0)
-        p2 = (11, 9)
-
-    path = find_path(map_array, p1, p2)
-
-    print(path)
+    print("Test function currently unavailable.")
 
 
 if __name__ == "__main__":
