@@ -84,7 +84,7 @@ To improve the simulation performance I planned on implementing some form of mul
 
 The next logical step was to move ”further outside” of the simulation. I thought about splitting the animals into several processes, so the simulation could handle multiple alive- routines at once, hence boosting the performance by how many processes were running at once. But I also quickly ran into problems here.
 
-Due to how the animals interact with one another, there are several scenarios where they become dependent one each other; i.e. while hunting/being hunted and during mating. So there is a high likelihood that a deadlock between two animals occurs. Without fun- damentally changing the way the animals behave and interact, or by including a lot of locks (which I wasn’t sure would solve the problem in all cases), there was no real way to safely implement this.
+Due to how the animals interact with one another, there are several scenarios where they become dependent one each other; i.e. while hunting/being hunted and during mating. So there is a high likelihood that a deadlock between two animals occurs. Without fundamentally changing the way the animals behave and interact, or by including a lot of locks (which I wasn’t sure would solve the problem in all cases), there was no real way to safely implement this.
 
 ### Running multiple simulations
 
